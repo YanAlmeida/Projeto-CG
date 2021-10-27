@@ -47,7 +47,7 @@ void OpenGLWindow::initializeGL() {
   // Load a new font
   ImGuiIO &io{ImGui::GetIO()};
   const auto filename{getAssetsPath() + "Inconsolata-Medium.ttf"};
-  m_font = io.Fonts->AddFontFromFileTTF(filename.c_str(), 60.0f);
+  m_font = io.Fonts->AddFontFromFileTTF(filename.c_str(), 42.0f);
   if (m_font == nullptr) {
     throw abcg::Exception{abcg::Exception::Runtime("Cannot load font file")};
   }
@@ -78,8 +78,7 @@ void OpenGLWindow::restart() {
 
   m_starLayers.initializeGL(m_starsProgram, 25);
   m_ship.initializeGL(m_objectsProgram);
-  m_asteroids.initializeGL(m_objectsProgram, 3);
-  m_bullets.initializeGL(m_objectsProgram);
+  m_asteroids.initializeGL(m_objectsProgram, 1);
 }
 
 void OpenGLWindow::update() {
@@ -95,7 +94,6 @@ void OpenGLWindow::update() {
   m_ship.update(m_gameData, deltaTime);
   m_starLayers.update(m_ship, deltaTime);
   m_asteroids.update(deltaTime);
-  m_bullets.update(m_ship, m_gameData, deltaTime);
 
   if (m_gameTimer.elapsed() > 2) {
     m_gameTimer.restart();
@@ -124,14 +122,47 @@ void OpenGLWindow::paintGL() {
 
   m_starLayers.paintGL();
   m_asteroids.paintGL();
-  m_bullets.paintGL();
   m_ship.paintGL(m_gameData);
 }
 
 void OpenGLWindow::paintUI() {
   abcg::OpenGLWindow::paintUI();
+  // texto que aparece durante o game
+  if(m_gameData.m_state == State::Playing){
+      //conversoes
+      #include <string> 
+      std::string s = std::to_string(m_rounds+1);
+      char const *pchar = s.c_str();
 
-  {
+      std::string s2 = std::to_string(60 - (m_rounds*2));
+      char const *pchar2 = s2.c_str();
+
+      //definições do imgui
+    const auto size{ImVec2(720, 170)};
+    const auto position{ImVec2(0,0)};
+    ImGui::SetNextWindowPos(position);
+    ImGui::SetNextWindowSize(size);
+
+      ImGuiWindowFlags flags{ImGuiWindowFlags_NoBackground |
+                              ImGuiWindowFlags_NoTitleBar |
+                            ImGuiWindowFlags_NoInputs};
+      ImGui::Begin(" ", nullptr, flags);
+      ImGui::PushFont(m_font);
+      
+      ImGui::Columns(2);
+      ImGui::SetColumnWidth(1,100);
+      ImGui::Text("Pedras desviadas:");
+      ImGui::Text("Tempo restante:");
+      ImGui::NextColumn();
+      ImGui::SetColumnWidth(1,100);
+      ImGui::Text(pchar);
+      ImGui::Text(pchar2);
+
+      
+      ImGui::PopFont();
+      ImGui::End();
+    }
+  else{
     const auto size{ImVec2(300, 85)};
     const auto position{ImVec2((m_viewportWidth - size.x) / 2.0f,
                                (m_viewportHeight - size.y) / 2.0f)};
@@ -166,7 +197,6 @@ void OpenGLWindow::terminateGL() {
   abcg::glDeleteProgram(m_objectsProgram);
 
   m_asteroids.terminateGL();
-  m_bullets.terminateGL();
   m_ship.terminateGL();
   m_starLayers.terminateGL();
 }
@@ -189,7 +219,7 @@ void OpenGLWindow::checkCollisions() {
   }
 
 void OpenGLWindow::checkWinCondition() {
-  if (m_rounds == 30) {
+  if (m_rounds == 10) {
     m_gameData.m_state = State::Win;
     m_restartWaitTimer.restart();
     m_rounds = 0;
