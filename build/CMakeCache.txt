@@ -154,7 +154,7 @@ CMAKE_PROJECT_DESCRIPTION:STATIC=
 CMAKE_PROJECT_HOMEPAGE_URL:STATIC=
 
 //Value Computed by CMake
-CMAKE_PROJECT_NAME:STATIC=projetocg
+CMAKE_PROJECT_NAME:STATIC=projeto_cg
 
 //Path to a program.
 CMAKE_RANLIB:FILEPATH=C:/msys64/mingw64/bin/ranlib.exe
@@ -241,6 +241,15 @@ EXECUTABLE_OUTPUT_PATH:PATH=
 
 //Single output directory for building all libraries.
 LIBRARY_OUTPUT_PATH:PATH=
+
+//Value Computed by CMake
+projeto_cg_BINARY_DIR:STATIC=C:/Users/Pichau/Desktop/COMPGRAFICA/projetos/abcg/examples/projetocg/build
+
+//Value Computed by CMake
+projeto_cg_IS_TOP_LEVEL:STATIC=ON
+
+//Value Computed by CMake
+projeto_cg_SOURCE_DIR:STATIC=C:/Users/Pichau/Desktop/COMPGRAFICA/projetos/abcg/examples/projetocg
 
 //Value Computed by CMake
 projetocg_BINARY_DIR:STATIC=C:/Users/Pichau/Desktop/COMPGRAFICA/projetos/abcg/examples/projetocg/build

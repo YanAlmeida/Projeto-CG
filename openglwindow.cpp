@@ -73,6 +73,9 @@ void OpenGLWindow::initializeGL() {
 }
 
 void OpenGLWindow::restart() {
+  m_rounds = 0;
+  m_pedras_desviadas = 0;
+  m_ScreenTimer.restart();
   m_gameTimer.restart();
   m_gameData.m_state = State::Playing;
 
@@ -93,18 +96,19 @@ void OpenGLWindow::update() {
 
   m_ship.update(m_gameData, deltaTime);
   m_starLayers.update(m_ship, deltaTime);
-  m_asteroids.update(deltaTime);
+  m_asteroids.update(deltaTime, &m_pedras_desviadas);
 
-  if (m_gameTimer.elapsed() > 2) {
+  if (m_gameTimer.elapsed() > 1) {
     m_gameTimer.restart();
     m_rounds += 1;
     std::uniform_real_distribution<float> m_randomDist{-1.0f, 1.0f};
     std::generate_n(std::back_inserter(m_asteroids.m_asteroids), 1, [&]() {
       int ordenation = signbit(m_randomDist(m_randomEngine));
-      int starting_point = -1;
-      if(ordenation) starting_point = 1;
+      int starting_point = 1;
+      if(ordenation) starting_point = -1;
+      float velocity = (float) (m_total_time - m_ScreenTimer.elapsed())/12.0f;
       return m_asteroids.createAsteroid(
-          glm::vec2{m_randomDist(m_randomEngine), starting_point}, -4.0f, ordenation);
+          glm::vec2{m_randomDist(m_randomEngine), starting_point}, velocity, ordenation);
     });
   }
 
@@ -131,10 +135,10 @@ void OpenGLWindow::paintUI() {
   if(m_gameData.m_state == State::Playing){
       //conversoes
       #include <string> 
-      std::string s = std::to_string(m_rounds+1);
+      std::string s = std::to_string(m_pedras_desviadas);
       char const *pchar = s.c_str();
 
-      std::string s2 = std::to_string(60 - (m_rounds*2));
+      std::string s2 = std::to_string(m_total_time - m_ScreenTimer.elapsed());
       char const *pchar2 = s2.c_str();
 
       //definições do imgui
@@ -154,7 +158,7 @@ void OpenGLWindow::paintUI() {
       ImGui::Text("Pedras desviadas:");
       ImGui::Text("Tempo restante:");
       ImGui::NextColumn();
-      ImGui::SetColumnWidth(1,100);
+      ImGui::SetColumnWidth(1,110);
       ImGui::Text(pchar);
       ImGui::Text(pchar2);
 
@@ -219,9 +223,8 @@ void OpenGLWindow::checkCollisions() {
   }
 
 void OpenGLWindow::checkWinCondition() {
-  if (m_rounds == 10) {
+  if (m_rounds == m_total_time && m_gameData.m_state == State::Playing) {
     m_gameData.m_state = State::Win;
     m_restartWaitTimer.restart();
-    m_rounds = 0;
   }
 }

@@ -16,7 +16,7 @@ class Asteroids {
   void paintGL();
   void terminateGL();
 
-  void update(float deltaTime);
+  void update(float deltaTime, int* m_asteroids_desviados_pointer);
 
  private:
   friend OpenGLWindow;

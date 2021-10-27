@@ -26,6 +26,8 @@ class OpenGLWindow : public abcg::OpenGLWindow {
   int m_viewportWidth{};
   int m_viewportHeight{};
   int m_rounds{0};
+  int m_pedras_desviadas{0};
+  const int m_total_time{60};
 
   GameData m_gameData;
 
@@ -35,6 +37,7 @@ class OpenGLWindow : public abcg::OpenGLWindow {
 
   abcg::ElapsedTimer m_restartWaitTimer;
   abcg::ElapsedTimer m_gameTimer;
+  abcg::ElapsedTimer m_ScreenTimer;
 
   ImFont* m_font{};
 

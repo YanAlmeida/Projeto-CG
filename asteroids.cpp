@@ -54,13 +54,16 @@ void Asteroids::terminateGL() {
   }
 }
 
-void Asteroids::update(float deltaTime) {
+void Asteroids::update(float deltaTime, int* m_pedras_desviados_pointer) {
   for (auto &asteroid : m_asteroids) {
     asteroid.m_rotation = glm::wrapAngle(
         asteroid.m_rotation + asteroid.m_angularVelocity * deltaTime);
     asteroid.m_translation += asteroid.m_velocity * deltaTime;
 
-    if (asteroid.m_translation.y < -(1.0f + asteroid.m_scale) || asteroid.m_translation.y > (1.0f + asteroid.m_scale)) asteroid.m_hit = 1;
+    if (asteroid.m_translation.y < -(1.0f + asteroid.m_scale) || asteroid.m_translation.y > (1.0f + asteroid.m_scale)){
+      asteroid.m_hit = 1;
+      *(m_pedras_desviados_pointer) += 1;
+    }
   }
 }
 
