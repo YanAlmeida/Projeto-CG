@@ -21,13 +21,7 @@ void Asteroids::initializeGL(GLuint program, int quantity) {
   m_asteroids.resize(quantity);
 
   for (auto &asteroid : m_asteroids) {
-    asteroid = createAsteroid();
-
-    // Make sure the asteroid won't collide with the ship
-    do {
-      asteroid.m_translation = {m_randomDist(m_randomEngine),
-                                m_randomDist(m_randomEngine)};
-    } while (glm::length(asteroid.m_translation) < 0.5f);
+    asteroid = createAsteroid(glm::vec2{m_randomDist(m_randomEngine), 1});
   }
 }
 
@@ -41,14 +35,11 @@ void Asteroids::paintGL() {
     abcg::glUniform1f(m_scaleLoc, asteroid.m_scale);
     abcg::glUniform1f(m_rotationLoc, asteroid.m_rotation);
 
-    for (auto i : {-2, 0, 2}) {
-      for (auto j : {-2, 0, 2}) {
-        abcg::glUniform2f(m_translationLoc, asteroid.m_translation.x + j,
-                          asteroid.m_translation.y + i);
+    abcg::glUniform2f(m_translationLoc, asteroid.m_translation.x,
+                      asteroid.m_translation.y);
 
-        abcg::glDrawArrays(GL_TRIANGLE_FAN, 0, asteroid.m_polygonSides + 2);
-      }
-    }
+    abcg::glDrawArrays(GL_TRIANGLE_FAN, 0, asteroid.m_polygonSides + 2);
+
 
     abcg::glBindVertexArray(0);
   }
@@ -63,29 +54,24 @@ void Asteroids::terminateGL() {
   }
 }
 
-void Asteroids::update(const Ship &ship, float deltaTime) {
+void Asteroids::update(float deltaTime) {
   for (auto &asteroid : m_asteroids) {
-    asteroid.m_translation -= ship.m_velocity * deltaTime;
     asteroid.m_rotation = glm::wrapAngle(
         asteroid.m_rotation + asteroid.m_angularVelocity * deltaTime);
     asteroid.m_translation += asteroid.m_velocity * deltaTime;
 
-    // Wrap-around
-    if (asteroid.m_translation.x < -1.0f) asteroid.m_translation.x += 2.0f;
-    if (asteroid.m_translation.x > +1.0f) asteroid.m_translation.x -= 2.0f;
-    if (asteroid.m_translation.y < -1.0f) asteroid.m_translation.y += 2.0f;
-    if (asteroid.m_translation.y > +1.0f) asteroid.m_translation.y -= 2.0f;
+    if (asteroid.m_translation.y < -(1.0f + asteroid.m_scale) || asteroid.m_translation.y > (1.0f + asteroid.m_scale)) asteroid.m_hit = 1;
   }
 }
 
-Asteroids::Asteroid Asteroids::createAsteroid(glm::vec2 translation,
-                                              float scale) {
+Asteroids::Asteroid Asteroids::createAsteroid(glm::vec2 translation, float inverse_velocity,
+                                              int ordenation, float scale) {
   Asteroid asteroid;
 
   auto &re{m_randomEngine};  // Shortcut
 
   // Randomly choose the number of sides
-  std::uniform_int_distribution<int> randomSides(6, 15);
+  std::uniform_int_distribution<int> randomSides(8, 10);
   asteroid.m_polygonSides = randomSides(re);
 
   // Choose a random color (actually, a grayscale)
@@ -102,14 +88,19 @@ Asteroids::Asteroid Asteroids::createAsteroid(glm::vec2 translation,
   asteroid.m_angularVelocity = m_randomDist(re);
 
   // Choose a random direction
-  glm::vec2 direction{m_randomDist(re), m_randomDist(re)};
-  asteroid.m_velocity = glm::normalize(direction) / 7.0f;
+  glm::vec2 direction{0, -1};
+
+  if(ordenation){
+    direction.y=1;
+  }
+ 
+  asteroid.m_velocity = glm::normalize(direction) / inverse_velocity;
 
   // Create geometry
   std::vector<glm::vec2> positions(0);
   positions.emplace_back(0, 0);
   const auto step{M_PI * 2 / asteroid.m_polygonSides};
-  std::uniform_real_distribution<float> randomRadius(0.8f, 1.0f);
+  std::uniform_real_distribution<float> randomRadius(0.6f, 0.8f);
   for (const auto angle : iter::range(0.0, M_PI * 2, step)) {
     const auto radius{randomRadius(re)};
     positions.emplace_back(radius * std::cos(angle), radius * std::sin(angle));

@@ -26,6 +26,7 @@ class OpenGLWindow : public abcg::OpenGLWindow {
 
   int m_viewportWidth{};
   int m_viewportHeight{};
+  int m_rounds{0};
 
   GameData m_gameData;
 
@@ -35,6 +36,7 @@ class OpenGLWindow : public abcg::OpenGLWindow {
   StarLayers m_starLayers;
 
   abcg::ElapsedTimer m_restartWaitTimer;
+  abcg::ElapsedTimer m_gameTimer;
 
   ImFont* m_font{};
 
