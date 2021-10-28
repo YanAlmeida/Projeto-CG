@@ -59,7 +59,7 @@ void OpenGLWindow::initializeGL() {
   m_objectsProgram = createProgramFromFile(getAssetsPath() + "objects.vert",
                                            getAssetsPath() + "objects.frag");
 
-  abcg::glClearColor(0.2f, 0.5f, 0.9f, 1);
+  
 
 #if !defined(__EMSCRIPTEN__)
   abcg::glEnable(GL_PROGRAM_POINT_SIZE);
@@ -161,7 +161,7 @@ void OpenGLWindow::paintUI() {
       ImGui::PopFont();
       ImGui::End();
     } else {
-      const auto size{ImVec2(380, 130)};
+      const auto size{ImVec2(380, 200)};
       const auto position{ImVec2((m_viewportWidth - size.x) / 2.0f,
                                  (m_viewportHeight - size.y) / 2.0f)};
       ImGui::SetNextWindowPos(position);
@@ -177,6 +177,27 @@ void OpenGLWindow::paintUI() {
         if (ImGui::IsItemClicked()) {
           restart();
         }
+
+        static bool enabled{true};
+        static bool enabled2{false};
+        ImGui::Checkbox("Colorido", &enabled);
+        ImGui::Checkbox("Preto e branco", &enabled2);
+       
+        if (enabled == true){
+          abcg::glClearColor(0.2f, 0.5f, 0.9f, 1);
+          enabled2 = false;  
+        }
+        else if(enabled == false){
+          abcg::glClearColor(0.0f, 0.0f, 0.0f, 1);
+          m_ship.m_color = glm::vec4 {1.0f, 1.0f, 1.0f, 0};
+
+          for (const auto &asteroid : m_asteroids.m_asteroids){
+            asteroid.m_color.r = 
+          }
+
+          enabled2 = true;  
+        }
+        
       }
 
       if (m_gameData.m_state == State::GameOver) {
