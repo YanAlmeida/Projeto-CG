@@ -26,7 +26,8 @@ class Asteroids {
   GLint m_rotationLoc{};
   GLint m_translationLoc{};
   GLint m_scaleLoc{};
-
+  glm::vec4 m_color_asteroids{1};
+  
   struct Asteroid {
     GLuint m_vao{};
     GLuint m_vbo{};
