@@ -90,10 +90,9 @@ void OpenGLWindow::update() {
   const float deltaTime{static_cast<float>(getDeltaTime())};
 
   m_ship.update(m_gameData, deltaTime);
-  m_starLayers.update(m_ship, deltaTime);
   m_asteroids.update(deltaTime, &m_pedras_desviadas);
 
-  if (m_gameTimer.elapsed() > 1) {
+  if (m_gameTimer.elapsed() > 1.2f) {
     m_gameTimer.restart();
     m_rounds += 1;
     std::uniform_real_distribution<float> m_randomDist{-1.0f, 1.0f};
