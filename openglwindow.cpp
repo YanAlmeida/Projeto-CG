@@ -47,7 +47,7 @@ void OpenGLWindow::initializeGL() {
   // Load a new font
   ImGuiIO &io{ImGui::GetIO()};
   const auto filename{getAssetsPath() + "Inconsolata-Medium.ttf"};
-  m_font = io.Fonts->AddFontFromFileTTF(filename.c_str(), 42.0f);
+  m_font = io.Fonts->AddFontFromFileTTF(filename.c_str(), 40.0f);
   if (m_font == nullptr) {
     throw abcg::Exception{abcg::Exception::Runtime("Cannot load font file")};
   }
@@ -161,7 +161,7 @@ void OpenGLWindow::paintUI() {
       ImGui::PopFont();
       ImGui::End();
     } else {
-      const auto size{ImVec2(300, 85)};
+      const auto size{ImVec2(380, 130)};
       const auto position{ImVec2((m_viewportWidth - size.x) / 2.0f,
                                  (m_viewportHeight - size.y) / 2.0f)};
       ImGui::SetNextWindowPos(position);
@@ -180,14 +180,14 @@ void OpenGLWindow::paintUI() {
       }
 
       if (m_gameData.m_state == State::GameOver) {
-        ImGui::Text("Game Over!");
+        ImGui::Text("    *Game Over!*");
         ImGui::Button("Jogar Novamente", ImVec2(-1, 50));
         // See also IsItemHovered, IsItemActive, etc
         if (ImGui::IsItemClicked()) {
           restart();
         }
       } else if (m_gameData.m_state == State::Win) {
-        ImGui::Text("*You Win!*");
+        ImGui::Text("    *You Win!*");
         ImGui::Button("Jogar Novamente", ImVec2(-1, 50));
         // See also IsItemHovered, IsItemActive, etc
         if (ImGui::IsItemClicked()) {
