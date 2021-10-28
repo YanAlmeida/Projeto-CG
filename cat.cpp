@@ -1,9 +1,9 @@
-#include "ship.hpp"
+#include "cat.hpp"
 
 #include <glm/gtx/fast_trigonometry.hpp>
 #include <glm/gtx/rotate_vector.hpp>
 
-void Ship::initializeGL(GLuint program) {
+void Cat::initializeGL(GLuint program) {
   terminateGL();
 
   m_program = program;
@@ -90,7 +90,7 @@ void Ship::initializeGL(GLuint program) {
   abcg::glBindVertexArray(0);
 }
 
-void Ship::paintGL(const GameData &gameData) {
+void Cat::paintGL(const GameData &gameData){
   if (gameData.m_state != State::Playing) return;
 
   abcg::glUseProgram(m_program);
@@ -109,14 +109,14 @@ void Ship::paintGL(const GameData &gameData) {
   abcg::glUseProgram(0);
 }
 
-void Ship::terminateGL() {
+void Cat::terminateGL() {
   abcg::glDeleteBuffers(1, &m_vbo);
   abcg::glDeleteBuffers(1, &m_ebo);
   abcg::glDeleteVertexArrays(1, &m_vao);
 }
 
 
-void Ship::update(const GameData &gameData, float deltatime) {
+void Cat::update(const GameData &gameData, float deltatime) {
   // Move
   if (gameData.m_input[static_cast<size_t>(Input::Left)] && m_translation.x>-(1-m_scale))
     m_translation += (glm::vec2{-0.7f, 0.0f})*deltatime;

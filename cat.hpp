@@ -1,5 +1,5 @@
-#ifndef SHIP_HPP_
-#define SHIP_HPP_
+#ifndef CAT_HPP_
+#define CAT_HPP_
 
 #include "abcg.hpp"
 #include "gamedata.hpp"
@@ -9,7 +9,7 @@ class Bullets;
 class OpenGLWindow;
 class StarLayers;
 
-class Ship {
+class Cat {
  public:
   void initializeGL(GLuint program);
   void paintGL(const GameData &gameData);
@@ -20,7 +20,6 @@ class Ship {
 
  private:
   friend Asteroids;
-  friend Bullets;
   friend OpenGLWindow;
   friend StarLayers;
 

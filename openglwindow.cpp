@@ -37,10 +37,10 @@ void OpenGLWindow::handleEvent(SDL_Event &event) {
 
     position.y = -position.y;
 
-    if (position.x > -(1 - m_ship.m_scale) && position.x < (1 - m_ship.m_scale))
-      m_ship.m_translation.x = position.x;
-    if (position.y > -(1 - m_ship.m_scale) && position.y < (1 - m_ship.m_scale))
-      m_ship.m_translation.y = position.y;
+    if (position.x > -(1 - m_cat.m_scale) && position.x < (1 - m_cat.m_scale))
+      m_cat.m_translation.x = position.x;
+    if (position.y > -(1 - m_cat.m_scale) && position.y < (1 - m_cat.m_scale))
+      m_cat.m_translation.y = position.y;
   }
 }
 
@@ -70,7 +70,7 @@ void OpenGLWindow::initializeGL() {
   m_randomEngine.seed(
       std::chrono::steady_clock::now().time_since_epoch().count());
   m_starLayers.initializeGL(m_starsProgram, 25);
-  m_ship.initializeGL(m_objectsProgram);
+  m_cat.initializeGL(m_objectsProgram);
   m_asteroids.initializeGL(m_objectsProgram, 1);
 }
 
@@ -82,14 +82,14 @@ void OpenGLWindow::restart() {
   m_gameTimer.restart();
   m_gameData.m_state = State::Playing;
   m_starLayers.initializeGL(m_starsProgram, 25);
-  m_ship.initializeGL(m_objectsProgram);
+  m_cat.initializeGL(m_objectsProgram);
   m_asteroids.initializeGL(m_objectsProgram, 1);
 }
 
 void OpenGLWindow::update() {
   const float deltaTime{static_cast<float>(getDeltaTime())};
 
-  m_ship.update(m_gameData, deltaTime);
+  m_cat.update(m_gameData, deltaTime);
   m_asteroids.update(deltaTime, &m_pedras_desviadas);
   float interval;
 
@@ -134,7 +134,7 @@ void OpenGLWindow::paintGL() {
 
   m_starLayers.paintGL();
   m_asteroids.paintGL();
-  m_ship.paintGL(m_gameData);
+  m_cat.paintGL(m_gameData);
 }
 
 void OpenGLWindow::paintUI() {
@@ -192,7 +192,7 @@ void OpenGLWindow::paintUI() {
 
       if (enabled == 0) {
         abcg::glClearColor(0.2f, 0.5f, 0.9f, 1);
-        m_ship.m_color = glm::vec4{1.0f, 0.69f, 0.3f, 1.0f};
+        m_cat.m_color = glm::vec4{1.0f, 0.69f, 0.3f, 1.0f};
         glm::vec4 asteroid_color{0.90f, 0.4f, 0.5f, 1.0f};
 
         for (auto &asteroid : m_asteroids.m_asteroids) {
@@ -201,7 +201,7 @@ void OpenGLWindow::paintUI() {
         m_asteroids.m_color_asteroids = asteroid_color;
       } else if (enabled == 1) {
         abcg::glClearColor(0.0f, 0.0f, 0.0f, 1);
-        m_ship.m_color = glm::vec4{1.0f, 1.0f, 1.0f, 0};
+        m_cat.m_color = glm::vec4{1.0f, 1.0f, 1.0f, 0};
         glm::vec4 asteroid_color{1.0f, 1.0f, 1.0f, 1.0f};
 
         for (auto &asteroid : m_asteroids.m_asteroids) {
@@ -226,7 +226,7 @@ void OpenGLWindow::paintUI() {
 
       if (enabled == 0) {
         abcg::glClearColor(0.2f, 0.5f, 0.9f, 1);
-        m_ship.m_color = glm::vec4{1.0f, 0.69f, 0.3f, 1.0f};
+        m_cat.m_color = glm::vec4{1.0f, 0.69f, 0.3f, 1.0f};
         glm::vec4 asteroid_color{0.90f, 0.4f, 0.5f, 1.0f};
 
         for (auto &asteroid : m_asteroids.m_asteroids) {
@@ -235,7 +235,7 @@ void OpenGLWindow::paintUI() {
         m_asteroids.m_color_asteroids = asteroid_color;
       } else if (enabled == 1) {
         abcg::glClearColor(0.0f, 0.0f, 0.0f, 1);
-        m_ship.m_color = glm::vec4{1.0f, 1.0f, 1.0f, 0};
+        m_cat.m_color = glm::vec4{1.0f, 1.0f, 1.0f, 0};
         glm::vec4 asteroid_color{1.0f, 1.0f, 1.0f, 1.0f};
 
         for (auto &asteroid : m_asteroids.m_asteroids) {
@@ -257,7 +257,7 @@ void OpenGLWindow::paintUI() {
 
       if (enabled == 0) {
         abcg::glClearColor(0.2f, 0.5f, 0.9f, 1);
-        m_ship.m_color = glm::vec4{1.0f, 0.69f, 0.3f, 1.0f};
+        m_cat.m_color = glm::vec4{1.0f, 0.69f, 0.3f, 1.0f};
         glm::vec4 asteroid_color{0.90f, 0.4f, 0.5f, 1.0f};
 
         for (auto &asteroid : m_asteroids.m_asteroids) {
@@ -266,7 +266,7 @@ void OpenGLWindow::paintUI() {
         m_asteroids.m_color_asteroids = asteroid_color;
       } else if (enabled == 1) {
         abcg::glClearColor(0.0f, 0.0f, 0.0f, 1);
-        m_ship.m_color = glm::vec4{1.0f, 1.0f, 1.0f, 0};
+        m_cat.m_color = glm::vec4{1.0f, 1.0f, 1.0f, 0};
         glm::vec4 asteroid_color{1.0f, 1.0f, 1.0f, 1.0f};
 
         for (auto &asteroid : m_asteroids.m_asteroids) {
@@ -298,18 +298,18 @@ void OpenGLWindow::terminateGL() {
   abcg::glDeleteProgram(m_objectsProgram);
 
   m_asteroids.terminateGL();
-  m_ship.terminateGL();
+  m_cat.terminateGL();
   m_starLayers.terminateGL();
 }
 
 void OpenGLWindow::checkCollisions() {
-  // Check collision between ship and asteroids
+  // Check collision between cat and asteroids
   for (const auto &asteroid : m_asteroids.m_asteroids) {
     const auto asteroidTranslation{asteroid.m_translation};
     const auto distance{
-        glm::distance(m_ship.m_translation, asteroidTranslation)};
+        glm::distance(m_cat.m_translation, asteroidTranslation)};
 
-    if (distance < m_ship.m_scale * 0.9f + asteroid.m_scale * 0.85f) {
+    if (distance < m_cat.m_scale * 0.9f + asteroid.m_scale * 0.85f) {
       m_gameData.m_state = State::GameOver;
     }
   }

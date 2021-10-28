@@ -1,5 +1,5 @@
 project(projeto_cg)
 
-add_executable(${PROJECT_NAME} main.cpp openglwindow.cpp asteroids.cpp ship.cpp starlayers.cpp)
+add_executable(${PROJECT_NAME} main.cpp openglwindow.cpp asteroids.cpp cat.cpp starlayers.cpp)
 
 enable_abcg(${PROJECT_NAME})
