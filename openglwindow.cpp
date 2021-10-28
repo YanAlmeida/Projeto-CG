@@ -184,18 +184,21 @@ void OpenGLWindow::paintUI() {
         ImGui::Checkbox("Preto e branco", &enabled2);
        
         if (enabled == true){
-          abcg::glClearColor(0.2f, 0.5f, 0.9f, 1);
-          enabled2 = false;  
+          enabled2 = false;
+          abcg::glClearColor(0.2f, 0.5f, 0.9f, 1);           
         }
         else if(enabled == false){
+          enabled2 = true;
           abcg::glClearColor(0.0f, 0.0f, 0.0f, 1);
           m_ship.m_color = glm::vec4 {1.0f, 1.0f, 1.0f, 0};
 
-          for (const auto &asteroid : m_asteroids.m_asteroids){
-            asteroid.m_color.r = 
+          for (auto &asteroid : m_asteroids.m_asteroids){
+            asteroid.m_color.r = 1.0f;
+            asteroid.m_color.g = 1.0f;
+            asteroid.m_color.b = 1.0f;
           }
 
-          enabled2 = true;  
+            
         }
         
       }
