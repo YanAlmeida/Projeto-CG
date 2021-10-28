@@ -4,6 +4,10 @@
 
 #include "abcg.hpp"
 
+#include <iostream>
+
+#include <iomanip>
+
 void OpenGLWindow::handleEvent(SDL_Event &event) {
   // Keyboard events
   if (event.type == SDL_KEYDOWN) {
@@ -53,9 +57,6 @@ void OpenGLWindow::initializeGL() {
     throw abcg::Exception{abcg::Exception::Runtime("Cannot load font file")};
   }
 
-  // Create program to render the stars
-  m_starsProgram = createProgramFromFile(getAssetsPath() + "stars.vert",
-                                         getAssetsPath() + "stars.frag");
   // Create program to render the other objects
   m_objectsProgram = createProgramFromFile(getAssetsPath() + "objects.vert",
                                            getAssetsPath() + "objects.frag");
@@ -69,7 +70,8 @@ void OpenGLWindow::initializeGL() {
   // Start pseudo-random number generator
   m_randomEngine.seed(
       std::chrono::steady_clock::now().time_since_epoch().count());
-  m_starLayers.initializeGL(m_starsProgram, 25);
+
+  m_clouds.initializeGL(m_objectsProgram, 3);
   m_cat.initializeGL(m_objectsProgram);
   m_asteroids.initializeGL(m_objectsProgram, 1);
 }
@@ -81,7 +83,8 @@ void OpenGLWindow::restart() {
   m_ScreenTimer.restart();
   m_gameTimer.restart();
   m_gameData.m_state = State::Playing;
-  m_starLayers.initializeGL(m_starsProgram, 25);
+
+  m_clouds.initializeGL(m_objectsProgram, 3);
   m_cat.initializeGL(m_objectsProgram);
   m_asteroids.initializeGL(m_objectsProgram, 1);
 }
@@ -132,7 +135,7 @@ void OpenGLWindow::paintGL() {
   abcg::glClear(GL_COLOR_BUFFER_BIT);
   abcg::glViewport(0, 0, m_viewportWidth, m_viewportHeight);
 
-  m_starLayers.paintGL();
+  m_clouds.paintGL();
   m_asteroids.paintGL();
   m_cat.paintGL(m_gameData);
 }
@@ -141,17 +144,17 @@ void OpenGLWindow::paintUI() {
   abcg::OpenGLWindow::paintUI();
   // texto que aparece durante o game
   if (m_gameData.m_state == State::Playing) {
-
-    // conversoes
-    #include <string>
+// conversoes
+#include <string>
     std::string s = std::to_string(m_pedras_desviadas);
     char const *pchar = s.c_str();
 
-    std::string s2 = std::to_string(m_total_time - m_ScreenTimer.elapsed());
+    double tempo_restante = m_total_time - m_ScreenTimer.elapsed();
+    std::string s2 = std::to_string(tempo_restante);
     char const *pchar2 = s2.c_str();
 
     // definições do imgui
-    const auto size{ImVec2(720, 150)};
+    const auto size{ImVec2(720, 170)};
     const auto position{ImVec2(0, 0)};
     ImGui::SetNextWindowPos(position);
     ImGui::SetNextWindowSize(size);
@@ -167,14 +170,14 @@ void OpenGLWindow::paintUI() {
     ImGui::Text("Pedras desviadas:");
     ImGui::Text("Tempo restante:");
     ImGui::NextColumn();
-    ImGui::SetColumnWidth(1, 85);
+    ImGui::SetColumnWidth(1, 110);
     ImGui::Text(pchar);
     ImGui::Text(pchar2);
 
     ImGui::PopFont();
     ImGui::End();
   } else {
-    const auto size{ImVec2(380, 260)};
+    const auto size{ImVec2(380, 200)};
     const auto position{ImVec2((m_viewportWidth - size.x) / 2.0f,
                                (m_viewportHeight - size.y) / 2.0f)};
     ImGui::SetNextWindowPos(position);
@@ -184,50 +187,21 @@ void OpenGLWindow::paintUI() {
     ImGui::Begin(" ", nullptr, flags);
     ImGui::PushFont(m_font);
 
-    static int enabled=0;
-
     if (m_gameData.m_state == State::Initial) {
-      ImGui::Text("    *Cat run!*");
-      ImGui::RadioButton("Dia", &enabled, 0);
-      ImGui::RadioButton("Noite", &enabled, 1);
-
-      if (enabled == 0) {
-        abcg::glClearColor(0.2f, 0.5f, 0.9f, 1);
-        m_cat.m_color = glm::vec4{1.0f, 0.69f, 0.3f, 1.0f};
-        glm::vec4 asteroid_color{0.90f, 0.4f, 0.5f, 1.0f};
-
-        for (auto &asteroid : m_asteroids.m_asteroids) {
-          asteroid.m_color = asteroid_color;
-        }
-        m_asteroids.m_color_asteroids = asteroid_color;
-      } else if (enabled == 1) {
-        abcg::glClearColor(0.0f, 0.0f, 0.0f, 1);
-        m_cat.m_color = glm::vec4{1.0f, 1.0f, 1.0f, 0};
-        glm::vec4 asteroid_color{1.0f, 1.0f, 1.0f, 1.0f};
-
-        for (auto &asteroid : m_asteroids.m_asteroids) {
-          asteroid.m_color = asteroid_color;
-        }
-        m_asteroids.m_color_asteroids = asteroid_color;
-      }
-
       ImGui::Button("Iniciar", ImVec2(-1, 50));
       // See also IsItemHovered, IsItemActive, etc
       if (ImGui::IsItemClicked()) {
         restart();
       }
-    }
+      static int enabled=0;
 
-    if (m_gameData.m_state == State::GameOver) {
-      ImGui::Text("    *Game Over!*");
-      
-      ImGui::RadioButton("Dia", &enabled, 0);
-      ImGui::RadioButton("Noite", &enabled, 1);
+      ImGui::RadioButton("Colorido", &enabled, 0);
+      ImGui::RadioButton("Preto e branco", &enabled, 1);
 
       if (enabled == 0) {
         abcg::glClearColor(0.2f, 0.5f, 0.9f, 1);
         m_cat.m_color = glm::vec4{1.0f, 0.69f, 0.3f, 1.0f};
-        glm::vec4 asteroid_color{0.90f, 0.4f, 0.5f, 1.0f};
+        glm::vec4 asteroid_color{1.0f, 0.0f, 0.0f, 1.0f};
 
         for (auto &asteroid : m_asteroids.m_asteroids) {
           asteroid.m_color = asteroid_color;
@@ -243,6 +217,10 @@ void OpenGLWindow::paintUI() {
         }
         m_asteroids.m_color_asteroids = asteroid_color;
       }
+    }
+
+    if (m_gameData.m_state == State::GameOver) {
+      ImGui::Text("    *Game Over!*");
       ImGui::Button("Jogar Novamente", ImVec2(-1, 50));
       // See also IsItemHovered, IsItemActive, etc
       if (ImGui::IsItemClicked()) {
@@ -250,29 +228,6 @@ void OpenGLWindow::paintUI() {
       }
     } else if (m_gameData.m_state == State::Win) {
       ImGui::Text("    *You Win!*");
-      
-      ImGui::RadioButton("Dia", &enabled, 0);
-      ImGui::RadioButton("Noite", &enabled, 1);
-
-      if (enabled == 0) {
-        abcg::glClearColor(0.2f, 0.5f, 0.9f, 1);
-        m_cat.m_color = glm::vec4{1.0f, 0.69f, 0.3f, 1.0f};
-        glm::vec4 asteroid_color{0.90f, 0.4f, 0.5f, 1.0f};
-
-        for (auto &asteroid : m_asteroids.m_asteroids) {
-          asteroid.m_color = asteroid_color;
-        }
-        m_asteroids.m_color_asteroids = asteroid_color;
-      } else if (enabled == 1) {
-        abcg::glClearColor(0.0f, 0.0f, 0.0f, 1);
-        m_cat.m_color = glm::vec4{1.0f, 1.0f, 1.0f, 0};
-        glm::vec4 asteroid_color{1.0f, 1.0f, 1.0f, 1.0f};
-
-        for (auto &asteroid : m_asteroids.m_asteroids) {
-          asteroid.m_color = asteroid_color;
-        }
-        m_asteroids.m_color_asteroids = asteroid_color;
-      }
       ImGui::Button("Jogar Novamente", ImVec2(-1, 50));
       // See also IsItemHovered, IsItemActive, etc
       if (ImGui::IsItemClicked()) {
@@ -293,16 +248,16 @@ void OpenGLWindow::resizeGL(int width, int height) {
 }
 
 void OpenGLWindow::terminateGL() {
-  abcg::glDeleteProgram(m_starsProgram);
+  abcg::glDeleteProgram(m_objectsProgram);
   abcg::glDeleteProgram(m_objectsProgram);
 
   m_asteroids.terminateGL();
   m_cat.terminateGL();
-  m_starLayers.terminateGL();
+  m_clouds.terminateGL();
 }
 
 void OpenGLWindow::checkCollisions() {
-  // Check collision between cat and asteroids
+  // Check collision between ship and asteroids
   for (const auto &asteroid : m_asteroids.m_asteroids) {
     const auto asteroidTranslation{asteroid.m_translation};
     const auto distance{

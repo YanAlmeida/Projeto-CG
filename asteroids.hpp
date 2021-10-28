@@ -5,8 +5,6 @@
 #include <random>
 
 #include "abcg.hpp"
-#include "gamedata.hpp"
-#include "cat.hpp"
 
 class OpenGLWindow;
 
