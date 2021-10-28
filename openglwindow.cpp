@@ -77,6 +77,7 @@ void OpenGLWindow::initializeGL() {
 void OpenGLWindow::restart() {
   m_rounds = 0;
   m_pedras_desviadas = 0;
+  m_controlTimer.restart();
   m_ScreenTimer.restart();
   m_gameTimer.restart();
   m_gameData.m_state = State::Playing;
@@ -91,10 +92,21 @@ void OpenGLWindow::update() {
 
   m_ship.update(m_gameData, deltaTime);
   m_asteroids.update(deltaTime, &m_pedras_desviadas);
+  float interval;
 
-  if (m_gameTimer.elapsed() > 1.2f) {
-    m_gameTimer.restart();
+
+
+  if(60 - m_ScreenTimer.elapsed() < 30 && 60 - m_ScreenTimer.elapsed() > 10) {interval = 0.75f;}
+  else if(60 - m_ScreenTimer.elapsed() < 10) {interval = 1.2f;}
+  else {interval = 1.0f;}
+
+  if(m_controlTimer.elapsed() > 1.0f && m_gameData.m_state == State::Playing){
+    m_controlTimer.restart();
     m_rounds += 1;
+  }
+
+  if (m_gameTimer.elapsed() > interval) {
+    m_gameTimer.restart();
     std::uniform_real_distribution<float> m_randomDist{-1.0f, 1.0f};
     std::generate_n(std::back_inserter(m_asteroids.m_asteroids), 1, [&]() {
       int ordenation = signbit(m_randomDist(m_randomEngine));
@@ -224,7 +236,6 @@ void OpenGLWindow::checkCollisions() {
 
     if (distance < m_ship.m_scale * 0.9f + asteroid.m_scale * 0.85f) {
       m_gameData.m_state = State::GameOver;
-      m_restartWaitTimer.restart();
     }
   }
 
@@ -235,6 +246,5 @@ void OpenGLWindow::checkCollisions() {
 void OpenGLWindow::checkWinCondition() {
   if (m_rounds == m_total_time && m_gameData.m_state == State::Playing) {
     m_gameData.m_state = State::Win;
-    m_restartWaitTimer.restart();
   }
 }

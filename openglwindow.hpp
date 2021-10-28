@@ -35,7 +35,7 @@ class OpenGLWindow : public abcg::OpenGLWindow {
   Ship m_ship;
   StarLayers m_starLayers;
 
-  abcg::ElapsedTimer m_restartWaitTimer;
+  abcg::ElapsedTimer m_controlTimer;
   abcg::ElapsedTimer m_gameTimer;
   abcg::ElapsedTimer m_ScreenTimer;
 

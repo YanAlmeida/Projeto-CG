@@ -101,24 +101,6 @@ void Ship::paintGL(const GameData &gameData) {
   abcg::glUniform1f(m_rotationLoc, m_rotation);
   abcg::glUniform2fv(m_translationLoc, 1, &m_translation.x);
 
-  // Restart thruster blink timer every 100 ms
-  if (m_trailBlinkTimer.elapsed() > 100.0 / 1000.0) m_trailBlinkTimer.restart();
-
-  if (gameData.m_input[static_cast<size_t>(Input::Up)]) {
-    // Show thruster trail during 50 ms
-    if (m_trailBlinkTimer.elapsed() < 50.0 / 1000.0) {
-      abcg::glEnable(GL_BLEND);
-      abcg::glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-      // 50% transparent
-      abcg::glUniform4f(m_colorLoc, 1, 1, 1, 0.5f);
-
-      abcg::glDrawElements(GL_TRIANGLES, 14 * 3, GL_UNSIGNED_INT, nullptr);
-
-      abcg::glDisable(GL_BLEND);
-    }
-  }
-
   abcg::glUniform4fv(m_colorLoc, 1, &m_color.r);
   abcg::glDrawElements(GL_TRIANGLES, 14 * 3, GL_UNSIGNED_INT, nullptr);
 
