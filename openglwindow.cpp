@@ -69,7 +69,7 @@ void OpenGLWindow::initializeGL() {
   // Start pseudo-random number generator
   m_randomEngine.seed(
       std::chrono::steady_clock::now().time_since_epoch().count());
-  m_starLayers.initializeGL(m_starsProgram, 25);cl
+  m_starLayers.initializeGL(m_starsProgram, 25);
   m_ship.initializeGL(m_objectsProgram);
   m_asteroids.initializeGL(m_objectsProgram, 1);
 }
