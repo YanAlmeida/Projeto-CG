@@ -187,8 +187,8 @@ void OpenGLWindow::paintUI() {
     if (m_gameData.m_state == State::Initial) {
       static int enabled=0;
 
-      ImGui::RadioButton("Colorido", &enabled, 0);
-      ImGui::RadioButton("Preto e branco", &enabled, 1);
+      ImGui::RadioButton("Dia", &enabled, 0);
+      ImGui::RadioButton("Noite", &enabled, 1);
 
       if (enabled == 0) {
         abcg::glClearColor(0.2f, 0.5f, 0.9f, 1);
@@ -221,8 +221,8 @@ void OpenGLWindow::paintUI() {
       ImGui::Text("    *Game Over!*");
       static int enabled=0;
 
-      ImGui::RadioButton("Colorido", &enabled, 0);
-      ImGui::RadioButton("Preto e branco", &enabled, 1);
+      ImGui::RadioButton("Dia", &enabled, 0);
+      ImGui::RadioButton("Noite", &enabled, 1);
 
       if (enabled == 0) {
         abcg::glClearColor(0.2f, 0.5f, 0.9f, 1);
@@ -252,8 +252,8 @@ void OpenGLWindow::paintUI() {
       ImGui::Text("    *You Win!*");
       static int enabled=0;
 
-      ImGui::RadioButton("Colorido", &enabled, 0);
-      ImGui::RadioButton("Preto e branco", &enabled, 1);
+      ImGui::RadioButton("Dia", &enabled, 0);
+      ImGui::RadioButton("Noite", &enabled, 1);
 
       if (enabled == 0) {
         abcg::glClearColor(0.2f, 0.5f, 0.9f, 1);
