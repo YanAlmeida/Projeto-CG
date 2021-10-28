@@ -69,7 +69,9 @@ void OpenGLWindow::initializeGL() {
   m_randomEngine.seed(
       std::chrono::steady_clock::now().time_since_epoch().count());
 
-  restart();
+  m_starLayers.initializeGL(m_starsProgram, 25);
+  m_ship.initializeGL(m_objectsProgram);
+  m_asteroids.initializeGL(m_objectsProgram, 1);
 }
 
 void OpenGLWindow::restart() {
@@ -86,13 +88,6 @@ void OpenGLWindow::restart() {
 
 void OpenGLWindow::update() {
   const float deltaTime{static_cast<float>(getDeltaTime())};
-
-  // Wait 2 seconds before restarting
-  if (m_gameData.m_state != State::Playing &&
-      m_restartWaitTimer.elapsed() > 2) {
-    restart();
-    return;
-  }
 
   m_ship.update(m_gameData, deltaTime);
   m_starLayers.update(m_ship, deltaTime);
@@ -165,28 +160,44 @@ void OpenGLWindow::paintUI() {
       
       ImGui::PopFont();
       ImGui::End();
-    }
-  else{
-    const auto size{ImVec2(300, 85)};
-    const auto position{ImVec2((m_viewportWidth - size.x) / 2.0f,
-                               (m_viewportHeight - size.y) / 2.0f)};
-    ImGui::SetNextWindowPos(position);
-    ImGui::SetNextWindowSize(size);
-    ImGuiWindowFlags flags{ImGuiWindowFlags_NoBackground |
-                           ImGuiWindowFlags_NoTitleBar |
-                           ImGuiWindowFlags_NoInputs};
-    ImGui::Begin(" ", nullptr, flags);
-    ImGui::PushFont(m_font);
+    } else {
+      const auto size{ImVec2(300, 85)};
+      const auto position{ImVec2((m_viewportWidth - size.x) / 2.0f,
+                                 (m_viewportHeight - size.y) / 2.0f)};
+      ImGui::SetNextWindowPos(position);
+      ImGui::SetNextWindowSize(size);
+      ImGuiWindowFlags flags{ImGuiWindowFlags_NoBackground |
+                             ImGuiWindowFlags_NoTitleBar};
+      ImGui::Begin(" ", nullptr, flags);
+      ImGui::PushFont(m_font);
 
-    if (m_gameData.m_state == State::GameOver) {
-      ImGui::Text("Game Over!");
-    } else if (m_gameData.m_state == State::Win) {
-      ImGui::Text("*You Win!*");
-    }
+      if (m_gameData.m_state == State::Initial) {
+        ImGui::Button("Iniciar", ImVec2(-1, 50));
+        // See also IsItemHovered, IsItemActive, etc
+        if (ImGui::IsItemClicked()) {
+          restart();
+        }
+      }
 
-    ImGui::PopFont();
-    ImGui::End();
-  }
+      if (m_gameData.m_state == State::GameOver) {
+        ImGui::Text("Game Over!");
+        ImGui::Button("Jogar Novamente", ImVec2(-1, 50));
+        // See also IsItemHovered, IsItemActive, etc
+        if (ImGui::IsItemClicked()) {
+          restart();
+        }
+      } else if (m_gameData.m_state == State::Win) {
+        ImGui::Text("*You Win!*");
+        ImGui::Button("Jogar Novamente", ImVec2(-1, 50));
+        // See also IsItemHovered, IsItemActive, etc
+        if (ImGui::IsItemClicked()) {
+          restart();
+        }
+      }
+
+      ImGui::PopFont();
+      ImGui::End();
+    }
 }
 
 void OpenGLWindow::resizeGL(int width, int height) {
