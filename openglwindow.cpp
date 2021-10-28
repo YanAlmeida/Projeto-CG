@@ -175,7 +175,7 @@ void OpenGLWindow::paintUI() {
     ImGui::PopFont();
     ImGui::End();
   } else {
-    const auto size{ImVec2(380, 200)};
+    const auto size{ImVec2(380, 260)};
     const auto position{ImVec2((m_viewportWidth - size.x) / 2.0f,
                                (m_viewportHeight - size.y) / 2.0f)};
     ImGui::SetNextWindowPos(position);
@@ -199,7 +199,7 @@ void OpenGLWindow::paintUI() {
       if (enabled == 0) {
         abcg::glClearColor(0.2f, 0.5f, 0.9f, 1);
         m_ship.m_color = glm::vec4{1.0f, 0.69f, 0.3f, 1.0f};
-        glm::vec4 asteroid_color{1.0f, 0.0f, 0.0f, 1.0f};
+        glm::vec4 asteroid_color{0.90f, 0.4f, 0.5f, 1.0f};
 
         for (auto &asteroid : m_asteroids.m_asteroids) {
           asteroid.m_color = asteroid_color;
@@ -224,12 +224,60 @@ void OpenGLWindow::paintUI() {
       if (ImGui::IsItemClicked()) {
         restart();
       }
+            static int enabled=0;
+
+      ImGui::RadioButton("Colorido", &enabled, 0);
+      ImGui::RadioButton("Preto e branco", &enabled, 1);
+
+      if (enabled == 0) {
+        abcg::glClearColor(0.2f, 0.5f, 0.9f, 1);
+        m_ship.m_color = glm::vec4{1.0f, 0.69f, 0.3f, 1.0f};
+        glm::vec4 asteroid_color{0.90f, 0.4f, 0.5f, 1.0f};
+
+        for (auto &asteroid : m_asteroids.m_asteroids) {
+          asteroid.m_color = asteroid_color;
+        }
+        m_asteroids.m_color_asteroids = asteroid_color;
+      } else if (enabled == 1) {
+        abcg::glClearColor(0.0f, 0.0f, 0.0f, 1);
+        m_ship.m_color = glm::vec4{1.0f, 1.0f, 1.0f, 0};
+        glm::vec4 asteroid_color{1.0f, 1.0f, 1.0f, 1.0f};
+
+        for (auto &asteroid : m_asteroids.m_asteroids) {
+          asteroid.m_color = asteroid_color;
+        }
+        m_asteroids.m_color_asteroids = asteroid_color;
+      }
     } else if (m_gameData.m_state == State::Win) {
       ImGui::Text("    *You Win!*");
       ImGui::Button("Jogar Novamente", ImVec2(-1, 50));
       // See also IsItemHovered, IsItemActive, etc
       if (ImGui::IsItemClicked()) {
         restart();
+      }
+      static int enabled=0;
+
+      ImGui::RadioButton("Colorido", &enabled, 0);
+      ImGui::RadioButton("Preto e branco", &enabled, 1);
+
+      if (enabled == 0) {
+        abcg::glClearColor(0.2f, 0.5f, 0.9f, 1);
+        m_ship.m_color = glm::vec4{1.0f, 0.69f, 0.3f, 1.0f};
+        glm::vec4 asteroid_color{0.90f, 0.4f, 0.5f, 1.0f};
+
+        for (auto &asteroid : m_asteroids.m_asteroids) {
+          asteroid.m_color = asteroid_color;
+        }
+        m_asteroids.m_color_asteroids = asteroid_color;
+      } else if (enabled == 1) {
+        abcg::glClearColor(0.0f, 0.0f, 0.0f, 1);
+        m_ship.m_color = glm::vec4{1.0f, 1.0f, 1.0f, 0};
+        glm::vec4 asteroid_color{1.0f, 1.0f, 1.0f, 1.0f};
+
+        for (auto &asteroid : m_asteroids.m_asteroids) {
+          asteroid.m_color = asteroid_color;
+        }
+        m_asteroids.m_color_asteroids = asteroid_color;
       }
     }
 
