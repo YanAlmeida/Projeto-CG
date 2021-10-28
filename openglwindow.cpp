@@ -184,9 +184,10 @@ void OpenGLWindow::paintUI() {
     ImGui::Begin(" ", nullptr, flags);
     ImGui::PushFont(m_font);
 
-    if (m_gameData.m_state == State::Initial) {
-      static int enabled=0;
+    static int enabled=0;
 
+    if (m_gameData.m_state == State::Initial) {
+      ImGui::Text("    *Cat run!*");
       ImGui::RadioButton("Dia", &enabled, 0);
       ImGui::RadioButton("Noite", &enabled, 1);
 
@@ -219,8 +220,7 @@ void OpenGLWindow::paintUI() {
 
     if (m_gameData.m_state == State::GameOver) {
       ImGui::Text("    *Game Over!*");
-      static int enabled=0;
-
+      
       ImGui::RadioButton("Dia", &enabled, 0);
       ImGui::RadioButton("Noite", &enabled, 1);
 
@@ -250,8 +250,7 @@ void OpenGLWindow::paintUI() {
       }
     } else if (m_gameData.m_state == State::Win) {
       ImGui::Text("    *You Win!*");
-      static int enabled=0;
-
+      
       ImGui::RadioButton("Dia", &enabled, 0);
       ImGui::RadioButton("Noite", &enabled, 1);
 
