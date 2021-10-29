@@ -48,6 +48,14 @@ void OpenGLWindow::handleEvent(SDL_Event &event) {
   }
 }
 
+//Funcao para resetar todas as keys caso jogo acabe enquanto elas estão pressionadas
+void OpenGLWindow::resetKeys(){
+  m_gameData.m_input.reset(static_cast<size_t>(Input::Up));
+  m_gameData.m_input.reset(static_cast<size_t>(Input::Down));
+  m_gameData.m_input.reset(static_cast<size_t>(Input::Left));
+  m_gameData.m_input.reset(static_cast<size_t>(Input::Right));
+}
+
 void OpenGLWindow::initializeGL() {
   // Nova fonte
   ImGuiIO &io{ImGui::GetIO()};
@@ -82,6 +90,7 @@ void OpenGLWindow::restart() {
   m_pedras_desviadas = 0;
   m_ScreenTimer.restart();
   m_gameTimer.restart();
+  resetKeys();
   m_gameData.m_state = State::Playing;
   m_starLayers.initializeGL(m_starsProgram, 25);
   m_clouds.initializeGL(m_objectsProgram, 3);

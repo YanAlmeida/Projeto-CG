@@ -45,6 +45,8 @@ class OpenGLWindow : public abcg::OpenGLWindow {
 
   std::default_random_engine m_randomEngine;
 
+  void resetKeys();
+
   void checkCollisions();
   void checkWinCondition();
   void decide_mode(int mode);
