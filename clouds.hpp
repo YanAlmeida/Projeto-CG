@@ -4,8 +4,8 @@
 #include <list>
 
 #include "abcg.hpp"
-#include "gamedata.hpp"
 #include "cat.hpp"
+#include "gamedata.hpp"
 
 class OpenGLWindow;
 
@@ -32,14 +32,12 @@ class Clouds {
     glm::vec4 m_color{1};
     int m_polygonSides{50};
 
-    
     glm::vec2 m_translation{glm::vec2(0)};
   };
 
   std::list<Cloud> m_clouds;
 
   Clouds::Cloud generateCloud(glm::vec2 translation);
-
 };
 
 #endif

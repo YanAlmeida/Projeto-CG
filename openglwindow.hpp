@@ -8,8 +8,8 @@
 #include "abcg.hpp"
 #include "asteroids.hpp"
 #include "cat.hpp"
-#include "starlayers.hpp"
 #include "clouds.hpp"
+#include "starlayers.hpp"
 
 class OpenGLWindow : public abcg::OpenGLWindow {
  protected:
