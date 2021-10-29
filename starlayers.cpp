@@ -5,7 +5,7 @@
 void StarLayers::initializeGL(GLuint program, int quantity) {
   terminateGL();
 
-  // Start pseudo-random number generator
+  // Inicia um contador com numeros pseudo aleatorios
   m_randomEngine.seed(
       std::chrono::steady_clock::now().time_since_epoch().count());
 
@@ -28,21 +28,21 @@ void StarLayers::initializeGL(GLuint program, int quantity) {
       data.push_back(glm::vec3(1) * distIntensity(re));
     }
 
-    // Generate VBO
+    // Cria VBO
     abcg::glGenBuffers(1, &layer.m_vbo);
     abcg::glBindBuffer(GL_ARRAY_BUFFER, layer.m_vbo);
     abcg::glBufferData(GL_ARRAY_BUFFER, data.size() * sizeof(glm::vec3),
                        data.data(), GL_STATIC_DRAW);
     abcg::glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-    // Get location of attributes in the program
+    // Obtem a localização dos atributos no programa
     GLint positionAttribute{abcg::glGetAttribLocation(m_program, "inPosition")};
     GLint colorAttribute{abcg::glGetAttribLocation(m_program, "inColor")};
 
-    // Create VAO
+    // Cria VAO
     abcg::glGenVertexArrays(1, &layer.m_vao);
 
-    // Bind vertex attributes to current VAO
+    // Vincular atributos de vértice ao VAO atual
     abcg::glBindVertexArray(layer.m_vao);
 
     abcg::glBindBuffer(GL_ARRAY_BUFFER, layer.m_vbo);
@@ -55,7 +55,7 @@ void StarLayers::initializeGL(GLuint program, int quantity) {
                                 reinterpret_cast<void *>(sizeof(glm::vec3)));
     abcg::glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-    // End of binding to current VAO
+    // Fim da ligação ao VAO atual
     abcg::glBindVertexArray(0);
   }
 }

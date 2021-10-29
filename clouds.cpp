@@ -60,7 +60,7 @@ Clouds::Cloud Clouds::generateCloud(glm::vec2 translation) {
   cloud.m_translation = translation;
   cloud.m_color = m_cloud_color;
 
-  // Create geometry
+  // Criar geometria
   std::vector<glm::vec2> positions(0);
   positions.emplace_back(0, 0);
   const auto step{M_PI * 2 / cloud.m_polygonSides};
@@ -69,20 +69,20 @@ Clouds::Cloud Clouds::generateCloud(glm::vec2 translation) {
   }
   positions.push_back(positions.at(1));
 
-  // Generate VBO
+  // Gerar VBO
   abcg::glGenBuffers(1, &cloud.m_vbo);
   abcg::glBindBuffer(GL_ARRAY_BUFFER, cloud.m_vbo);
   abcg::glBufferData(GL_ARRAY_BUFFER, positions.size() * sizeof(glm::vec2),
                      positions.data(), GL_STATIC_DRAW);
   abcg::glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-  // Get location of attributes in the program
+  // Pegar localizacao dos atributos no programa
   GLint positionAttribute{abcg::glGetAttribLocation(m_program, "inPosition")};
 
-  // Create VAO
+  // Criar VAO
   abcg::glGenVertexArrays(1, &cloud.m_vao);
 
-  // Bind vertex attributes to current VAO
+  // Vincular atributos de vértice ao VAO atual
   abcg::glBindVertexArray(cloud.m_vao);
 
   abcg::glBindBuffer(GL_ARRAY_BUFFER, cloud.m_vbo);
@@ -91,7 +91,7 @@ Clouds::Cloud Clouds::generateCloud(glm::vec2 translation) {
                               nullptr);
   abcg::glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-  // End of binding to current VAO
+  //  Fim da ligação ao VAO atual
   abcg::glBindVertexArray(0);
 
   return cloud;

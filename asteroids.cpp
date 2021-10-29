@@ -6,7 +6,7 @@
 void Asteroids::initializeGL(GLuint program, int quantity) {
   terminateGL();
 
-  // Start pseudo-random number generator
+  //Inicia um gerador de numeros pseudo-aleatórios
   m_randomEngine.seed(
       std::chrono::steady_clock::now().time_since_epoch().count());
 
@@ -73,13 +73,13 @@ Asteroids::Asteroid Asteroids::createAsteroid(glm::vec2 translation, float inver
                                               int ordenation, float scale) {
   Asteroid asteroid;
 
-  auto &re{m_randomEngine};  // Shortcut
+  auto &re{m_randomEngine};  
 
-  // Randomly choose the number of sides
+  // Escolher numero de lados aleatoriamente
   std::uniform_int_distribution<int> randomSides(8, 10);
   asteroid.m_polygonSides = randomSides(re);
 
-  // Choose a random color (actually, a grayscale)
+  // Escolher uma cor aleatoria na escala
   std::uniform_real_distribution<float> randomIntensity{0.6f, 0.9f};
   asteroid.m_color = m_color_asteroids*randomIntensity(re);
 
@@ -87,10 +87,10 @@ Asteroids::Asteroid Asteroids::createAsteroid(glm::vec2 translation, float inver
   asteroid.m_scale = scale;
   asteroid.m_translation = translation;
 
-  // Choose a random angular velocity
+  // Velocidade angular aleatoria
   asteroid.m_angularVelocity = m_randomDist(re);
 
-  // Choose a random direction
+  // Direção aleatoria
   glm::vec2 direction{0, -1};
 
   if(ordenation){
@@ -99,7 +99,7 @@ Asteroids::Asteroid Asteroids::createAsteroid(glm::vec2 translation, float inver
  
   asteroid.m_velocity = glm::normalize(direction) / inverse_velocity;
 
-  // Create geometry
+  // Criar geometria
   std::vector<glm::vec2> positions(0);
   positions.emplace_back(0, 0);
   const auto step{M_PI * 2 / asteroid.m_polygonSides};
@@ -110,20 +110,20 @@ Asteroids::Asteroid Asteroids::createAsteroid(glm::vec2 translation, float inver
   }
   positions.push_back(positions.at(1));
 
-  // Generate VBO
+  // Criar VBO
   abcg::glGenBuffers(1, &asteroid.m_vbo);
   abcg::glBindBuffer(GL_ARRAY_BUFFER, asteroid.m_vbo);
   abcg::glBufferData(GL_ARRAY_BUFFER, positions.size() * sizeof(glm::vec2),
                      positions.data(), GL_STATIC_DRAW);
   abcg::glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-  // Get location of attributes in the program
+  // Pegar localizacao dos atributos
   GLint positionAttribute{abcg::glGetAttribLocation(m_program, "inPosition")};
 
-  // Create VAO
+  // Criar VAO
   abcg::glGenVertexArrays(1, &asteroid.m_vao);
 
-  // Bind vertex attributes to current VAO
+  // Vincular atributos de vértice ao VAO atual
   abcg::glBindVertexArray(asteroid.m_vao);
 
   abcg::glBindBuffer(GL_ARRAY_BUFFER, asteroid.m_vbo);
@@ -132,7 +132,7 @@ Asteroids::Asteroid Asteroids::createAsteroid(glm::vec2 translation, float inver
                               nullptr);
   abcg::glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-  // End of binding to current VAO
+  //  Fim da ligação ao VAO atual
   abcg::glBindVertexArray(0);
 
   return asteroid;

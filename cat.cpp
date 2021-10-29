@@ -18,9 +18,8 @@ void Cat::initializeGL(GLuint program) {
   m_translation = glm::vec2(0);
   m_velocity = glm::vec2(0);
 
-  // clang-format off
   std::array<glm::vec2, 32> positions{
-      // Cat body
+      //Corpo do gato
       glm::vec2{-15.00f, +15.00f}, glm::vec2{-10.00f, +10.00f},
       glm::vec2{-15.00f, +10.00f}, glm::vec2{00.0f, +15.5f},
       glm::vec2{-05.00f, +10.00f}, glm::vec2{00.00f, +10.00f},
@@ -35,7 +34,7 @@ void Cat::initializeGL(GLuint program) {
       glm::vec2{+13.50f, 06.00f}, glm::vec2{+15.50f, 06.00f},
       };
 
-  // Normalize
+  // Normalizar
   for (auto &position : positions) {
     position /= glm::vec2{15.5f, 15.5f};
   }
@@ -55,29 +54,29 @@ void Cat::initializeGL(GLuint program) {
                            20, 21, 22,
                            20, 22, 23
                           };
-  // clang-format on
 
-  // Generate VBO
+
+  // Criar VBO
   abcg::glGenBuffers(1, &m_vbo);
   abcg::glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
   abcg::glBufferData(GL_ARRAY_BUFFER, sizeof(positions), positions.data(),
                      GL_STATIC_DRAW);
   abcg::glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-  // Generate EBO
+  // Criar EBO
   abcg::glGenBuffers(1, &m_ebo);
   abcg::glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ebo);
   abcg::glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices.data(),
                      GL_STATIC_DRAW);
   abcg::glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
-  // Get location of attributes in the program
+  // Pegar localizacao dos atributos no programa
   GLint positionAttribute{abcg::glGetAttribLocation(m_program, "inPosition")};
 
-  // Create VAO
+  // Criar VAO
   abcg::glGenVertexArrays(1, &m_vao);
 
-  // Bind vertex attributes to current VAO
+  // Vincular atributos de vértice ao VAO atual
   abcg::glBindVertexArray(m_vao);
 
   abcg::glEnableVertexAttribArray(positionAttribute);
@@ -88,7 +87,7 @@ void Cat::initializeGL(GLuint program) {
 
   abcg::glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ebo);
 
-  // End of binding to current VAO
+  // Fim da ligação ao VAO atual
   abcg::glBindVertexArray(0);
 }
 

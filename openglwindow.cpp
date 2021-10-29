@@ -49,7 +49,7 @@ void OpenGLWindow::handleEvent(SDL_Event &event) {
 }
 
 void OpenGLWindow::initializeGL() {
-  // Load a new font
+  // Nova fonte
   ImGuiIO &io{ImGui::GetIO()};
   const auto filename{getAssetsPath() + "Inconsolata-Medium.ttf"};
   m_font = io.Fonts->AddFontFromFileTTF(filename.c_str(), 40.0f);
@@ -57,10 +57,10 @@ void OpenGLWindow::initializeGL() {
     throw abcg::Exception{abcg::Exception::Runtime("Cannot load font file")};
   }
 
-  // Create program to render the stars
+  // Programa para renderizar estrelas
   m_starsProgram = createProgramFromFile(getAssetsPath() + "stars.vert",
                                          getAssetsPath() + "stars.frag");
-  // Create program to render the other objects
+  // Programa para renderizar objetos
   m_objectsProgram = createProgramFromFile(getAssetsPath() + "objects.vert",
                                            getAssetsPath() + "objects.frag");
 
@@ -159,7 +159,9 @@ void OpenGLWindow::paintUI() {
                            ImGuiWindowFlags_NoInputs};
     ImGui::Begin(" ", nullptr, flags);
     ImGui::PushFont(m_font);
-
+    
+    if (m_mode == 0){
+    ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(0,0,0,255));
     ImGui::Columns(2);
     ImGui::SetColumnWidth(1, 100);
     ImGui::Text("Pedras desviadas:");
@@ -168,9 +170,24 @@ void OpenGLWindow::paintUI() {
     ImGui::SetColumnWidth(1, 85);
     ImGui::Text(pchar);
     ImGui::Text(pchar2);
-
+    ImGui::PopStyleColor();
     ImGui::PopFont();
     ImGui::End();
+    }else{
+    ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(255,255,255,255));
+    ImGui::Columns(2);
+    ImGui::SetColumnWidth(1, 100);
+    ImGui::Text("Pedras desviadas:");
+    ImGui::Text("Tempo restante:");
+    ImGui::NextColumn();
+    ImGui::SetColumnWidth(1, 85);
+    ImGui::Text(pchar);
+    ImGui::Text(pchar2);
+    ImGui::PopStyleColor();
+    ImGui::PopFont();
+    ImGui::End();
+    }
+
   } else {
     const auto size{ImVec2(380, 260)};
     const auto position{ImVec2((m_viewportWidth - size.x) / 2.0f,
@@ -191,7 +208,7 @@ void OpenGLWindow::paintUI() {
       decide_mode(m_mode);
 
       ImGui::Button("Iniciar", ImVec2(-1, 50));
-      // See also IsItemHovered, IsItemActive, etc
+      // Criação condição botão
       if (ImGui::IsItemClicked()) {
         restart();
       }
@@ -205,7 +222,7 @@ void OpenGLWindow::paintUI() {
       decide_mode(m_mode);
 
       ImGui::Button("Jogar Novamente", ImVec2(-1, 50));
-      // See also IsItemHovered, IsItemActive, etc
+      // Criação condição botão
       if (ImGui::IsItemClicked()) {
         restart();
       }
@@ -217,7 +234,7 @@ void OpenGLWindow::paintUI() {
 
       decide_mode(m_mode);
       ImGui::Button("Jogar Novamente", ImVec2(-1, 50));
-      // See also IsItemHovered, IsItemActive, etc
+      // Criação condição botão
       if (ImGui::IsItemClicked()) {
         restart();
       }
@@ -247,7 +264,7 @@ void OpenGLWindow::terminateGL() {
 
 //Funcao para checar colisao entre o gato e os asteroides e para destruir asteroides que sairem da tela
 void OpenGLWindow::checkCollisions() {
-  // Check collision between cat and asteroids
+  // Verifica a colisão entre gato e asteróides
   for (const auto &asteroid : m_asteroids.m_asteroids) {
     const auto asteroidTranslation{asteroid.m_translation};
     const auto distance{
