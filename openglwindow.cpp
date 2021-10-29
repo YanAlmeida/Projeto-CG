@@ -66,10 +66,8 @@ void OpenGLWindow::initializeGL() {
   abcg::glEnable(GL_PROGRAM_POINT_SIZE);
 #endif
 
-  // Start pseudo-random number generator
-  m_randomEngine.seed(
-      std::chrono::steady_clock::now().time_since_epoch().count());
   m_starLayers.initializeGL(m_starsProgram, 25);
+  m_clouds.initializeGL(m_objectsProgram, 3);
   m_cat.initializeGL(m_objectsProgram);
   m_asteroids.initializeGL(m_objectsProgram, 1);
 }
@@ -82,6 +80,7 @@ void OpenGLWindow::restart() {
   m_gameTimer.restart();
   m_gameData.m_state = State::Playing;
   m_starLayers.initializeGL(m_starsProgram, 25);
+  m_clouds.initializeGL(m_objectsProgram, 3);
   m_cat.initializeGL(m_objectsProgram);
   m_asteroids.initializeGL(m_objectsProgram, 1);
 }
@@ -133,6 +132,7 @@ void OpenGLWindow::paintGL() {
   abcg::glViewport(0, 0, m_viewportWidth, m_viewportHeight);
 
   m_starLayers.paintGL();
+  m_clouds.paintGL();
   m_asteroids.paintGL();
   m_cat.paintGL(m_gameData);
 }
@@ -141,9 +141,8 @@ void OpenGLWindow::paintUI() {
   abcg::OpenGLWindow::paintUI();
   // texto que aparece durante o game
   if (m_gameData.m_state == State::Playing) {
-
-    // conversoes
-    #include <string>
+// conversoes
+#include <string>
     std::string s = std::to_string(m_pedras_desviadas);
     char const *pchar = s.c_str();
 
@@ -184,32 +183,12 @@ void OpenGLWindow::paintUI() {
     ImGui::Begin(" ", nullptr, flags);
     ImGui::PushFont(m_font);
 
-    static int enabled=0;
-
     if (m_gameData.m_state == State::Initial) {
       ImGui::Text("    *Cat run!*");
-      ImGui::RadioButton("Dia", &enabled, 0);
-      ImGui::RadioButton("Noite", &enabled, 1);
+      ImGui::RadioButton("Dia", &m_mode, 0);
+      ImGui::RadioButton("Noite", &m_mode, 1);
 
-      if (enabled == 0) {
-        abcg::glClearColor(0.2f, 0.5f, 0.9f, 1);
-        m_cat.m_color = glm::vec4{1.0f, 0.69f, 0.3f, 1.0f};
-        glm::vec4 asteroid_color{0.90f, 0.4f, 0.5f, 1.0f};
-
-        for (auto &asteroid : m_asteroids.m_asteroids) {
-          asteroid.m_color = asteroid_color;
-        }
-        m_asteroids.m_color_asteroids = asteroid_color;
-      } else if (enabled == 1) {
-        abcg::glClearColor(0.0f, 0.0f, 0.0f, 1);
-        m_cat.m_color = glm::vec4{1.0f, 1.0f, 1.0f, 0};
-        glm::vec4 asteroid_color{1.0f, 1.0f, 1.0f, 1.0f};
-
-        for (auto &asteroid : m_asteroids.m_asteroids) {
-          asteroid.m_color = asteroid_color;
-        }
-        m_asteroids.m_color_asteroids = asteroid_color;
-      }
+      decide_mode(m_mode);
 
       ImGui::Button("Iniciar", ImVec2(-1, 50));
       // See also IsItemHovered, IsItemActive, etc
@@ -220,29 +199,11 @@ void OpenGLWindow::paintUI() {
 
     if (m_gameData.m_state == State::GameOver) {
       ImGui::Text("    *Game Over!*");
-      
-      ImGui::RadioButton("Dia", &enabled, 0);
-      ImGui::RadioButton("Noite", &enabled, 1);
 
-      if (enabled == 0) {
-        abcg::glClearColor(0.2f, 0.5f, 0.9f, 1);
-        m_cat.m_color = glm::vec4{1.0f, 0.69f, 0.3f, 1.0f};
-        glm::vec4 asteroid_color{0.90f, 0.4f, 0.5f, 1.0f};
+      ImGui::RadioButton("Dia", &m_mode, 0);
+      ImGui::RadioButton("Noite", &m_mode, 1);
+      decide_mode(m_mode);
 
-        for (auto &asteroid : m_asteroids.m_asteroids) {
-          asteroid.m_color = asteroid_color;
-        }
-        m_asteroids.m_color_asteroids = asteroid_color;
-      } else if (enabled == 1) {
-        abcg::glClearColor(0.0f, 0.0f, 0.0f, 1);
-        m_cat.m_color = glm::vec4{1.0f, 1.0f, 1.0f, 0};
-        glm::vec4 asteroid_color{1.0f, 1.0f, 1.0f, 1.0f};
-
-        for (auto &asteroid : m_asteroids.m_asteroids) {
-          asteroid.m_color = asteroid_color;
-        }
-        m_asteroids.m_color_asteroids = asteroid_color;
-      }
       ImGui::Button("Jogar Novamente", ImVec2(-1, 50));
       // See also IsItemHovered, IsItemActive, etc
       if (ImGui::IsItemClicked()) {
@@ -250,29 +211,11 @@ void OpenGLWindow::paintUI() {
       }
     } else if (m_gameData.m_state == State::Win) {
       ImGui::Text("    *You Win!*");
-      
-      ImGui::RadioButton("Dia", &enabled, 0);
-      ImGui::RadioButton("Noite", &enabled, 1);
 
-      if (enabled == 0) {
-        abcg::glClearColor(0.2f, 0.5f, 0.9f, 1);
-        m_cat.m_color = glm::vec4{1.0f, 0.69f, 0.3f, 1.0f};
-        glm::vec4 asteroid_color{0.90f, 0.4f, 0.5f, 1.0f};
+      ImGui::RadioButton("Dia", &m_mode, 0);
+      ImGui::RadioButton("Noite", &m_mode, 1);
 
-        for (auto &asteroid : m_asteroids.m_asteroids) {
-          asteroid.m_color = asteroid_color;
-        }
-        m_asteroids.m_color_asteroids = asteroid_color;
-      } else if (enabled == 1) {
-        abcg::glClearColor(0.0f, 0.0f, 0.0f, 1);
-        m_cat.m_color = glm::vec4{1.0f, 1.0f, 1.0f, 0};
-        glm::vec4 asteroid_color{1.0f, 1.0f, 1.0f, 1.0f};
-
-        for (auto &asteroid : m_asteroids.m_asteroids) {
-          asteroid.m_color = asteroid_color;
-        }
-        m_asteroids.m_color_asteroids = asteroid_color;
-      }
+      decide_mode(m_mode);
       ImGui::Button("Jogar Novamente", ImVec2(-1, 50));
       // See also IsItemHovered, IsItemActive, etc
       if (ImGui::IsItemClicked()) {
@@ -298,6 +241,7 @@ void OpenGLWindow::terminateGL() {
 
   m_asteroids.terminateGL();
   m_cat.terminateGL();
+  m_clouds.terminateGL();
   m_starLayers.terminateGL();
 }
 
@@ -321,4 +265,33 @@ void OpenGLWindow::checkWinCondition() {
   if (m_rounds == m_total_time && m_gameData.m_state == State::Playing) {
     m_gameData.m_state = State::Win;
   }
+}
+
+void OpenGLWindow::decide_mode(int mode) {
+  glm::vec4 cat_color;
+  glm::vec4 asteroid_color;
+  glm::vec4 cloud_color;
+
+  if (mode == 0) {
+    abcg::glClearColor(0.2f, 0.5f, 0.9f, 1);
+    cat_color = glm::vec4{1.0f, 0.69f, 0.3f, 1.0f};
+    asteroid_color = glm::vec4{0.90f, 0.4f, 0.5f, 1.0f};
+    cloud_color = glm::vec4{1.0f, 1.0f, 1.0f, 1.0f};
+  } else {
+    abcg::glClearColor(0.0f, 0.0f, 0.0f, 1);
+    cat_color = glm::vec4{1.0f, 1.0f, 1.0f, 0};
+    asteroid_color = glm::vec4{1.0f, 1.0f, 1.0f, 1.0f};
+    cloud_color = glm::vec4{0.5f, 0.5f, 0.5f, 0.5f};
+  }
+
+  m_cat.m_color = cat_color;
+  for (auto &asteroid : m_asteroids.m_asteroids) {
+    asteroid.m_color = asteroid_color;
+  }
+  m_asteroids.m_color_asteroids = asteroid_color;
+
+  for (auto &cloud : m_clouds.m_clouds) {
+    cloud.m_color = cloud_color;
+  }
+  m_clouds.m_cloud_color = cloud_color;
 }

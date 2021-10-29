@@ -9,6 +9,7 @@
 #include "asteroids.hpp"
 #include "cat.hpp"
 #include "starlayers.hpp"
+#include "clouds.hpp"
 
 class OpenGLWindow : public abcg::OpenGLWindow {
  protected:
@@ -27,6 +28,7 @@ class OpenGLWindow : public abcg::OpenGLWindow {
   int m_viewportHeight{};
   int m_rounds{0};
   int m_pedras_desviadas{0};
+  int m_mode{0};
   const int m_total_time{60};
 
   GameData m_gameData;
@@ -34,6 +36,7 @@ class OpenGLWindow : public abcg::OpenGLWindow {
   Asteroids m_asteroids;
   Cat m_cat;
   StarLayers m_starLayers;
+  Clouds m_clouds;
 
   abcg::ElapsedTimer m_controlTimer;
   abcg::ElapsedTimer m_gameTimer;
@@ -45,6 +48,7 @@ class OpenGLWindow : public abcg::OpenGLWindow {
 
   void checkCollisions();
   void checkWinCondition();
+  void decide_mode(int mode);
 
   void restart();
   void update();
