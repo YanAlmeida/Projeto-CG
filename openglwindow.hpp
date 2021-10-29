@@ -38,7 +38,6 @@ class OpenGLWindow : public abcg::OpenGLWindow {
   StarLayers m_starLayers;
   Clouds m_clouds;
 
-  abcg::ElapsedTimer m_controlTimer;
   abcg::ElapsedTimer m_gameTimer;
   abcg::ElapsedTimer m_ScreenTimer;
 

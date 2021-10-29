@@ -3,6 +3,8 @@
 #include <glm/gtx/fast_trigonometry.hpp>
 #include <glm/gtx/rotate_vector.hpp>
 
+//Criação do gato
+
 void Cat::initializeGL(GLuint program) {
   terminateGL();
 

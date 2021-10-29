@@ -10,7 +10,7 @@ void Clouds::initializeGL(GLuint program, int quantity) {
   m_scaleLoc = abcg::glGetUniformLocation(m_program, "scale");
   m_translationLoc = abcg::glGetUniformLocation(m_program, "translation");
 
-  // Create asteroids
+  // Cria nuvens
   m_clouds.clear();
   m_clouds.resize(quantity);
   float dist = 0;
@@ -54,6 +54,7 @@ void Clouds::terminateGL() {
   }
 }
 
+//Função para gerar nuvens de acordo com posição dada (posição do circulo central)
 Clouds::Cloud Clouds::generateCloud(glm::vec2 translation) {
   Cloud cloud;
   cloud.m_translation = translation;

@@ -4,8 +4,10 @@
 
 #include "abcg.hpp"
 
+#include <string>
+
 void OpenGLWindow::handleEvent(SDL_Event &event) {
-  // Keyboard events
+  // Keyboard events (Movimentacao do gato via teclado)
   if (event.type == SDL_KEYDOWN) {
     if (event.key.keysym.sym == SDLK_UP || event.key.keysym.sym == SDLK_w)
       m_gameData.m_input.set(static_cast<size_t>(Input::Up));
@@ -27,6 +29,7 @@ void OpenGLWindow::handleEvent(SDL_Event &event) {
       m_gameData.m_input.reset(static_cast<size_t>(Input::Right));
   }
 
+  //Mouse events (movimentacao do gato através do mouse)
   if (event.type == SDL_MOUSEMOTION) {
     glm::ivec2 mousePosition;
     SDL_GetMouseState(&mousePosition.x, &mousePosition.y);
@@ -37,6 +40,7 @@ void OpenGLWindow::handleEvent(SDL_Event &event) {
 
     position.y = -position.y;
 
+    //Define limites para posição do gato
     if (position.x > -(1 - m_cat.m_scale) && position.x < (1 - m_cat.m_scale))
       m_cat.m_translation.x = position.x;
     if (position.y > -(1 - m_cat.m_scale) && position.y < (1 - m_cat.m_scale))
@@ -72,10 +76,10 @@ void OpenGLWindow::initializeGL() {
   m_asteroids.initializeGL(m_objectsProgram, 1);
 }
 
+//Função de restart do jogo
 void OpenGLWindow::restart() {
   m_rounds = 0;
   m_pedras_desviadas = 0;
-  m_controlTimer.restart();
   m_ScreenTimer.restart();
   m_gameTimer.restart();
   m_gameData.m_state = State::Playing;
@@ -92,19 +96,16 @@ void OpenGLWindow::update() {
   m_asteroids.update(deltaTime, &m_pedras_desviadas);
   float interval;
 
-  if (60 - m_ScreenTimer.elapsed() < 30 && 60 - m_ScreenTimer.elapsed() > 10) {
+  //controla tamanho do intervalo de acordo com tempo passado, baseado no tempo total definido no arquivo .hpp
+  if (m_total_time - m_ScreenTimer.elapsed() < m_total_time/2.0f && m_total_time - m_ScreenTimer.elapsed() > m_total_time/6.0f) {
     interval = 0.75f;
-  } else if (60 - m_ScreenTimer.elapsed() < 10) {
+  } else if (m_total_time - m_ScreenTimer.elapsed() < m_total_time/6.0f) {
     interval = 1.2f;
   } else {
     interval = 1.0f;
   }
 
-  if (m_controlTimer.elapsed() > 1.0f && m_gameData.m_state == State::Playing) {
-    m_controlTimer.restart();
-    m_rounds += 1;
-  }
-
+  //cria asteroides a cada intervalo, modificando sua velocidade segundo o tempo
   if (m_gameTimer.elapsed() > interval) {
     m_gameTimer.restart();
     std::uniform_real_distribution<float> m_randomDist{-1.0f, 1.0f};
@@ -112,9 +113,9 @@ void OpenGLWindow::update() {
       int ordenation = signbit(m_randomDist(m_randomEngine));
       int starting_point = 1;
       if (ordenation) starting_point = -1;
-      float velocity = (float)(m_total_time - m_ScreenTimer.elapsed()) / 12.0f;
+      float inverse_velocity = (float)(m_total_time - m_ScreenTimer.elapsed()) / (m_total_time/5.0f);
       return m_asteroids.createAsteroid(
-          glm::vec2{m_randomDist(m_randomEngine), starting_point}, velocity,
+          glm::vec2{m_randomDist(m_randomEngine), starting_point}, inverse_velocity,
           ordenation);
     });
   }
@@ -141,8 +142,6 @@ void OpenGLWindow::paintUI() {
   abcg::OpenGLWindow::paintUI();
   // texto que aparece durante o game
   if (m_gameData.m_state == State::Playing) {
-// conversoes
-#include <string>
     std::string s = std::to_string(m_pedras_desviadas);
     char const *pchar = s.c_str();
 
@@ -183,6 +182,7 @@ void OpenGLWindow::paintUI() {
     ImGui::Begin(" ", nullptr, flags);
     ImGui::PushFont(m_font);
 
+    //Define texto e botoes para cada estado de jogo (inicial, win e game over)
     if (m_gameData.m_state == State::Initial) {
       ImGui::Text("    *Cat run!*");
       ImGui::RadioButton("Dia", &m_mode, 0);
@@ -245,6 +245,7 @@ void OpenGLWindow::terminateGL() {
   m_starLayers.terminateGL();
 }
 
+//Funcao para checar colisao entre o gato e os asteroides e para destruir asteroides que sairem da tela
 void OpenGLWindow::checkCollisions() {
   // Check collision between cat and asteroids
   for (const auto &asteroid : m_asteroids.m_asteroids) {
@@ -261,12 +262,14 @@ void OpenGLWindow::checkCollisions() {
       [](const Asteroids::Asteroid &a) { return a.m_hit; });
 }
 
+//Funcao para checar se o tempo total de jogo passou (vitoria)
 void OpenGLWindow::checkWinCondition() {
-  if (m_rounds == m_total_time && m_gameData.m_state == State::Playing) {
+  if (m_ScreenTimer.elapsed() >= m_total_time && m_gameData.m_state == State::Playing) {
     m_gameData.m_state = State::Win;
   }
 }
 
+//Funcao para decidir modo (dia ou noite)
 void OpenGLWindow::decide_mode(int mode) {
   glm::vec4 cat_color;
   glm::vec4 asteroid_color;
@@ -281,7 +284,7 @@ void OpenGLWindow::decide_mode(int mode) {
     abcg::glClearColor(0.0f, 0.0f, 0.0f, 1);
     cat_color = glm::vec4{1.0f, 1.0f, 1.0f, 0};
     asteroid_color = glm::vec4{1.0f, 1.0f, 1.0f, 1.0f};
-    cloud_color = glm::vec4{0.5f, 0.5f, 0.5f, 0.5f};
+    cloud_color = glm::vec4{0.45f, 0.45f, 0.45f, 0.45f};
   }
 
   m_cat.m_color = cat_color;
