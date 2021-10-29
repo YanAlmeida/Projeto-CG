@@ -5,8 +5,8 @@
 #include <random>
 
 #include "abcg.hpp"
-#include "gamedata.hpp"
 #include "cat.hpp"
+#include "gamedata.hpp"
 
 class OpenGLWindow;
 
@@ -27,7 +27,7 @@ class Asteroids {
   GLint m_translationLoc{};
   GLint m_scaleLoc{};
   glm::vec4 m_color_asteroids{1};
-  
+
   struct Asteroid {
     GLuint m_vao{};
     GLuint m_vbo{};
@@ -47,7 +47,9 @@ class Asteroids {
   std::default_random_engine m_randomEngine;
   std::uniform_real_distribution<float> m_randomDist{-1.0f, 1.0f};
 
-  Asteroids::Asteroid createAsteroid(glm::vec2 translation = glm::vec2(0), float inverse_velocity = 7.0f, int ordenation = 0, float scale = 0.25f);
+  Asteroids::Asteroid createAsteroid(glm::vec2 translation = glm::vec2(0),
+                                     float inverse_velocity = 7.0f,
+                                     int ordenation = 0, float scale = 0.25f);
 };
 
 #endif

@@ -5,8 +5,8 @@
 #include <random>
 
 #include "abcg.hpp"
-#include "gamedata.hpp"
 #include "cat.hpp"
+#include "gamedata.hpp"
 
 class OpenGLWindow;
 
@@ -15,7 +15,6 @@ class StarLayers {
   void initializeGL(GLuint program, int quantity);
   void paintGL();
   void terminateGL();
-
 
  private:
   friend OpenGLWindow;

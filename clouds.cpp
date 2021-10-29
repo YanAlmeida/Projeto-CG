@@ -14,34 +14,33 @@ void Clouds::initializeGL(GLuint program, int quantity) {
   m_clouds.clear();
   m_clouds.resize(quantity);
   float dist = 0;
-  float dist_c_to_e = 2*m_radius*m_scale+0.05;
+  float dist_c_to_e = 2 * m_radius * m_scale + 0.05;
   float dist_side = 0.05f;
   for (auto &cloud : m_clouds) {
-    cloud = generateCloud(glm::vec2{-1+dist_c_to_e+dist_side+dist,1-(m_radius*m_scale+0.01)});
-    dist += 2*(1-(dist_c_to_e+dist_side))/(quantity-1);
+    cloud = generateCloud(glm::vec2{-1 + dist_c_to_e + dist_side + dist,
+                                    1 - (m_radius * m_scale + 0.01)});
+    dist += 2 * (1 - (dist_c_to_e + dist_side)) / (quantity - 1);
   }
 }
 
 void Clouds::paintGL() {
   abcg::glUseProgram(m_program);
-  
+
   for (const auto &cloud : m_clouds) {
-    float dist = m_radius*m_scale + 0.05f;
-    for(const int mod : {-1, 0, 1}){
+    float dist = m_radius * m_scale + 0.05f;
+    for (const int mod : {-1, 0, 1}) {
       abcg::glBindVertexArray(cloud.m_vao);
 
       abcg::glUniform4fv(m_colorLoc, 1, &cloud.m_color.r);
       abcg::glUniform1f(m_scaleLoc, m_scale);
 
-      abcg::glUniform2f(m_translationLoc, cloud.m_translation.x + mod*dist,
+      abcg::glUniform2f(m_translationLoc, cloud.m_translation.x + mod * dist,
                         cloud.m_translation.y);
 
       abcg::glDrawArrays(GL_TRIANGLE_FAN, 0, cloud.m_polygonSides + 2);
 
-
       abcg::glBindVertexArray(0);
     }
-
   }
 
   abcg::glUseProgram(0);
@@ -54,7 +53,8 @@ void Clouds::terminateGL() {
   }
 }
 
-//Função para gerar nuvens de acordo com posição dada (posição do circulo central)
+// Função para gerar nuvens de acordo com posição dada (posição do circulo
+// central)
 Clouds::Cloud Clouds::generateCloud(glm::vec2 translation) {
   Cloud cloud;
   cloud.m_translation = translation;
@@ -65,7 +65,8 @@ Clouds::Cloud Clouds::generateCloud(glm::vec2 translation) {
   positions.emplace_back(0, 0);
   const auto step{M_PI * 2 / cloud.m_polygonSides};
   for (const auto angle : iter::range(0.0, M_PI * 2, step)) {
-    positions.emplace_back(m_radius * std::cos(angle), m_radius * std::sin(angle));
+    positions.emplace_back(m_radius * std::cos(angle),
+                           m_radius * std::sin(angle));
   }
   positions.push_back(positions.at(1));
 

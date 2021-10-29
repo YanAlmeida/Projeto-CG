@@ -3,7 +3,7 @@
 #include <glm/gtx/fast_trigonometry.hpp>
 #include <glm/gtx/rotate_vector.hpp>
 
-//Criação do gato
+// Criação do gato
 
 void Cat::initializeGL(GLuint program) {
   terminateGL();
@@ -92,7 +92,7 @@ void Cat::initializeGL(GLuint program) {
   abcg::glBindVertexArray(0);
 }
 
-void Cat::paintGL(const GameData &gameData){
+void Cat::paintGL(const GameData &gameData) {
   if (gameData.m_state != State::Playing) return;
 
   abcg::glUseProgram(m_program);
@@ -117,15 +117,18 @@ void Cat::terminateGL() {
   abcg::glDeleteVertexArrays(1, &m_vao);
 }
 
-
 void Cat::update(const GameData &gameData, float deltatime) {
   // Move
-  if (gameData.m_input[static_cast<size_t>(Input::Left)] && m_translation.x>-(1-m_scale))
-    m_translation += (glm::vec2{-0.7f, 0.0f})*deltatime;
-  if (gameData.m_input[static_cast<size_t>(Input::Right)] && m_translation.x<(1-m_scale))
-    m_translation += (glm::vec2{0.7f, 0.0f})*deltatime;
-  if (gameData.m_input[static_cast<size_t>(Input::Up)] && m_translation.y<(1-m_scale))
-    m_translation += (glm::vec2{0.0f, 0.7f})*deltatime;
-  if (gameData.m_input[static_cast<size_t>(Input::Down)] && m_translation.y>-(1-m_scale))
-    m_translation += (glm::vec2{0.0f, -0.7f})*deltatime;
+  if (gameData.m_input[static_cast<size_t>(Input::Left)] &&
+      m_translation.x > -(1 - m_scale))
+    m_translation += (glm::vec2{-0.7f, 0.0f}) * deltatime;
+  if (gameData.m_input[static_cast<size_t>(Input::Right)] &&
+      m_translation.x < (1 - m_scale))
+    m_translation += (glm::vec2{0.7f, 0.0f}) * deltatime;
+  if (gameData.m_input[static_cast<size_t>(Input::Up)] &&
+      m_translation.y < (1 - m_scale))
+    m_translation += (glm::vec2{0.0f, 0.7f}) * deltatime;
+  if (gameData.m_input[static_cast<size_t>(Input::Down)] &&
+      m_translation.y > -(1 - m_scale))
+    m_translation += (glm::vec2{0.0f, -0.7f}) * deltatime;
 }

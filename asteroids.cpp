@@ -40,7 +40,6 @@ void Asteroids::paintGL() {
 
     abcg::glDrawArrays(GL_TRIANGLE_FAN, 0, asteroid.m_polygonSides + 2);
 
-
     abcg::glBindVertexArray(0);
   }
 
@@ -54,22 +53,25 @@ void Asteroids::terminateGL() {
   }
 }
 
-//Atualizacao dos asteroids (girar e se mover na tela)
-void Asteroids::update(float deltaTime, int* m_pedras_desviados_pointer) {
+// Atualizacao dos asteroids (girar e se mover na tela)
+void Asteroids::update(float deltaTime, int *m_pedras_desviados_pointer) {
   for (auto &asteroid : m_asteroids) {
     asteroid.m_rotation = glm::wrapAngle(
         asteroid.m_rotation + asteroid.m_angularVelocity * deltaTime);
     asteroid.m_translation += asteroid.m_velocity * deltaTime;
 
-    if (asteroid.m_translation.y < -(1.0f + asteroid.m_scale) || asteroid.m_translation.y > (1.0f + asteroid.m_scale)){
+    if (asteroid.m_translation.y < -(1.0f + asteroid.m_scale) ||
+        asteroid.m_translation.y > (1.0f + asteroid.m_scale)) {
       asteroid.m_hit = 1;
       *(m_pedras_desviados_pointer) += 1;
     }
   }
 }
 
-//Criando asteroids com posição, constante de velocidade inversa, ordenacao (cima ou baixo) e escala
-Asteroids::Asteroid Asteroids::createAsteroid(glm::vec2 translation, float inverse_velocity,
+// Criando asteroids com posição, constante de velocidade inversa, ordenacao
+// (cima ou baixo) e escala
+Asteroids::Asteroid Asteroids::createAsteroid(glm::vec2 translation,
+                                              float inverse_velocity,
                                               int ordenation, float scale) {
   Asteroid asteroid;
 
@@ -81,7 +83,7 @@ Asteroids::Asteroid Asteroids::createAsteroid(glm::vec2 translation, float inver
 
   // Choose a random color (actually, a grayscale)
   std::uniform_real_distribution<float> randomIntensity{0.6f, 0.9f};
-  asteroid.m_color = m_color_asteroids*randomIntensity(re);
+  asteroid.m_color = m_color_asteroids * randomIntensity(re);
 
   asteroid.m_rotation = 0.0f;
   asteroid.m_scale = scale;
@@ -93,10 +95,10 @@ Asteroids::Asteroid Asteroids::createAsteroid(glm::vec2 translation, float inver
   // Choose a random direction
   glm::vec2 direction{0, -1};
 
-  if(ordenation){
-    direction.y=1;
+  if (ordenation) {
+    direction.y = 1;
   }
- 
+
   asteroid.m_velocity = glm::normalize(direction) / inverse_velocity;
 
   // Create geometry
